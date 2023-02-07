@@ -1,7 +1,23 @@
+import { IsEmail, IsString, Length } from 'class-validator';
+
 export class UserDto {
-  name: string;
-  email: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
+  @IsString({ message: 'Поле должно быть строкой' })
+  @Length(3, Number.MAX_SAFE_INTEGER, {
+    message: 'Логин должен состоять минимум из 3 символов',
+  })
+  readonly name: string;
+
+  @IsString({ message: 'Поле должно быть строкой' })
+  @IsEmail({}, { message: 'Некорректный email' })
+  readonly email: string;
+
+  @IsString({ message: 'Поле должно быть строкой' })
+  @Length(9, Number.MAX_SAFE_INTEGER, {
+    message: 'Пароль должен состоять минимум из 9 символов',
+  })
+  readonly password: string;
+
+  readonly firstName?: string;
+
+  readonly lastName?: string;
 }
