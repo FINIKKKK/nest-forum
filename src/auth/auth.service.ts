@@ -20,14 +20,17 @@ export class AuthService {
 
   async login(dto: LoginUserDto) {
     const user = await this.usersService.getUserByEmail(dto.email);
-    const password = user
+    const isTruePassword = user
       ? await bcrypt.compare(dto.password, user.password)
       : undefined;
 
-    console.log(user, password);
-
-    if (user && password) {
-      return this.generateToken(user);
+    if (user && isTruePassword) {
+      const { password, ...userData } = user;
+      const token = await this.generateToken(user);
+      return {
+        ...userData,
+        token,
+      };
     }
     throw new UnauthorizedException({
       message: 'Неверный email или пароль',
@@ -35,7 +38,7 @@ export class AuthService {
   }
 
   async register(dto: UserDto) {
-    const findUserByName = await this.usersService.getUserByName(dto.name);
+    const findUserByName = await this.usersService.getUserByLogin(dto.login);
     const findUserByEmail = await this.usersService.getUserByEmail(dto.email);
     if (findUserByName) {
       throw new HttpException(
@@ -55,14 +58,17 @@ export class AuthService {
       ...dto,
       password: hashPassword,
     });
-    return this.generateToken(user);
+    const { password, ...userData } = user;
+    const token = await this.generateToken(user);
+    return {
+      ...userData,
+      token,
+    };
   }
 
   private async generateToken(user: UserEntity) {
-    const payload = { id: user.id, name: user.name, email: user.email };
-    return {
-      token: this.jwtService.sign(payload),
-    };
+    const payload = { id: user.id, name: user.login, email: user.email };
+    return this.jwtService.sign(payload);
   }
 
   private validateUser(user: UserEntity) {}

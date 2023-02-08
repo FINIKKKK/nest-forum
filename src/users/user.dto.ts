@@ -5,7 +5,7 @@ export class UserDto {
   @Length(3, Number.MAX_SAFE_INTEGER, {
     message: 'Логин должен состоять минимум из 3 символов',
   })
-  readonly name: string;
+  readonly login: string;
 
   @IsString({ message: 'Поле должно быть строкой' })
   @IsEmail({}, { message: 'Некорректный email' })

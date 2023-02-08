@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FilesService } from 'src/files/files.service';
 import { Repository } from 'typeorm';
 import { UserDto } from './user.dto';
 import { UserEntity } from './user.entity';
@@ -9,6 +10,7 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
+    private fileService: FilesService,
   ) {}
 
   async createUser(dto: UserDto) {
@@ -21,8 +23,8 @@ export class UsersService {
     return users;
   }
 
-  async getUserByName(name: string) {
-    const user = await this.usersRepository.findOne({ where: { name } });
+  async getUserByLogin(login: string) {
+    const user = await this.usersRepository.findOne({ where: { login } });
     return user;
   }
 
@@ -36,8 +38,12 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(id: number, dto: UserDto) {
-    const user = await this.usersRepository.update(id, dto);
+  async updateUser(id: number, dto: UserDto, avatar: any) {
+    const fileName = await this.fileService.createFile(avatar);
+    const user = await this.usersRepository.update(id, {
+      ...dto,
+      avatar: fileName,
+    });
     return user;
   }
 
