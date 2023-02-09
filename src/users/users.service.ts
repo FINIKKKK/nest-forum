@@ -4,6 +4,7 @@ import { FilesService } from 'src/files/files.service';
 import { Repository } from 'typeorm';
 import { UserDto } from './user.dto';
 import { UserEntity } from './user.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -40,8 +41,10 @@ export class UsersService {
 
   async updateUser(id: number, dto: UserDto, avatar: any) {
     const fileName = await this.fileService.createFile(avatar);
+    const hashPassword = await bcrypt.hash(dto.password, 5);
     const user = await this.usersRepository.update(id, {
       ...dto,
+      password: hashPassword,
       avatar: fileName,
     });
     return user;
