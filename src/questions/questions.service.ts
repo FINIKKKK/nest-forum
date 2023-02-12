@@ -11,8 +11,12 @@ export class QuestionsService {
     private questionsRepository: Repository<QuestionEntity>,
   ) {}
 
-  async createQuestion(dto: QuestionDto) {
-    const question = await this.questionsRepository.save(dto);
+  async createQuestion(dto: QuestionDto, userId: number) {
+    const question = await this.questionsRepository.save({
+      ...dto,
+      user: { id: userId },
+    });
+
     return question;
   }
 
@@ -22,12 +26,31 @@ export class QuestionsService {
   }
 
   async getQuestionById(id: number) {
-    const question = await this.questionsRepository.findOne({
-      where: {
-        id,
+    // await this.questionsRepository
+    //   .createQueryBuilder('questions')
+    //   .whereInIds(id)
+    //   .update()
+    //   .set({
+    //     views: () => 'views + 1',
+    //   })
+    //   .execute();
+
+    const question = await this.questionsRepository
+      .createQueryBuilder('q')
+      .whereInIds(id)
+      .leftJoinAndSelect('q.user', 'user')
+      .getOne();
+
+    return {
+      ...question,
+      user: {
+        id: question.user.id,
+        login: question.user.login,
+        firstName: question.user.firstName,
+        lastName: question.user.lastName,
+        avatar: question.user.avatar,
       },
-    });
-    return question;
+    };
   }
 
   async updateQuestion(id: number, dto: QuestionDto) {

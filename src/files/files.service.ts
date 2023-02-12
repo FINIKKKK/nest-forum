@@ -1,19 +1,37 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as uuid from 'uuid';
 
 @Injectable()
 export class FilesService {
-  async createFile(file) {
+  async uploadImage(image, dto) {
     try {
-      const fileName = uuid.v4() + '.jpg';
-      const filePath = path.resolve(__dirname, '..', 'static/img');
-      if (!fs.existsSync(filePath)) {
-        fs.mkdirSync(filePath, { recursive: true });
+      if (image.size > 2 * 1024 * 1024) {
+        throw new BadRequestException('Файл должен быть размером меньше 2мб');
       }
-      fs.writeFileSync(path.join(filePath, fileName), file.buffer);
-      return fileName;
+      const exp = image.originalname.match(/\.[^.]+$/)[0];
+      if (exp === '.jpg' || exp === '.png' || exp === '.jpeg') {
+        const fileName = uuid.v4() + exp;
+        const filePath = path.resolve(
+          __dirname,
+          '..',
+          `static/img/${dto.imagePath}`,
+        );
+        if (!fs.existsSync(filePath)) {
+          fs.mkdirSync(filePath, { recursive: true });
+        }
+        fs.writeFileSync(path.join(filePath, fileName), image.buffer);
+        return fileName;
+      }
+      throw new BadRequestException(
+        'Файл должен быть расширением png, jpg, jpeg',
+      );
     } catch (err) {
       throw new HttpException(
         'Не удалось загрузить файл',
