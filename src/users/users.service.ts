@@ -40,13 +40,10 @@ export class UsersService {
   }
 
   async updateUser(id: number, dto: UserDto, avatar: any) {
-<<<<<<< HEAD
     const fileName = await this.fileService.uploadImage(avatar, {
       imagePath: 'avatars',
     });
-=======
-    const fileName = await this.fileService.createFile(avatar);
->>>>>>> 6ba01bcf749cd4af49aaffd62ade2c66372f949b
+
     const hashPassword = await bcrypt.hash(dto.password, 5);
     const user = await this.usersRepository.update(id, {
       ...dto,

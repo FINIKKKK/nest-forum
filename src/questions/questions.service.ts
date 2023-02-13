@@ -11,19 +11,14 @@ export class QuestionsService {
     private questionsRepository: Repository<QuestionEntity>,
   ) {}
 
-<<<<<<< HEAD
+
   async createQuestion(dto: QuestionDto, userId: number) {
     const question = await this.questionsRepository.save({
       ...dto,
       user: { id: userId },
     });
-
-=======
-  async createQuestion(dto: QuestionDto) {
-    const question = await this.questionsRepository.save(dto);
->>>>>>> 6ba01bcf749cd4af49aaffd62ade2c66372f949b
-    return question;
   }
+
 
   async getAll() {
     const questions = await this.questionsRepository.find();
@@ -31,7 +26,6 @@ export class QuestionsService {
   }
 
   async getQuestionById(id: number) {
-<<<<<<< HEAD
     // await this.questionsRepository
     //   .createQueryBuilder('questions')
     //   .whereInIds(id)
@@ -57,14 +51,6 @@ export class QuestionsService {
         avatar: question.user.avatar,
       },
     };
-=======
-    const question = await this.questionsRepository.findOne({
-      where: {
-        id,
-      },
-    });
-    return question;
->>>>>>> 6ba01bcf749cd4af49aaffd62ade2c66372f949b
   }
 
   async updateQuestion(id: number, dto: QuestionDto) {
