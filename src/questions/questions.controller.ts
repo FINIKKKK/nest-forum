@@ -7,17 +7,18 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { QuestionDto } from './dto/question.dto';
 import { User } from 'src/users/user.decorator';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-
+import { SearchQuestionDto } from './dto/search-question.dto';
 
 @Controller('questions')
 export class QuestionsController {
   constructor(private readonly questionsService: QuestionsService) {}
-  
+
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: QuestionDto, @User() userId: number) {
@@ -25,8 +26,8 @@ export class QuestionsController {
   }
 
   @Get()
-  findAll() {
-    return this.questionsService.getAll();
+  findAll(@Query() dto: SearchQuestionDto) {
+    return this.questionsService.getAll(dto);
   }
 
   @Get(':id')

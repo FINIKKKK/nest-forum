@@ -9,6 +9,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { QuestionsModule } from './questions/questions.module';
 import { TagsModule } from './tags/tags.module';
 import * as path from 'path';
+import { UserEntity } from './users/user.entity';
+import { QuestionEntity } from './questions/question.entity';
+import { TagEntity } from './tags/tag.entity';
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import * as path from 'path';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: ['dist/**/*.entity.js'],
+      entities: [UserEntity, QuestionEntity, TagEntity],
       synchronize: true,
     }),
     UsersModule,

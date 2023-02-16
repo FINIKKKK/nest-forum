@@ -25,6 +25,8 @@ export class TagsService {
   async searchTags(dto: SearchTagDto) {
     const qb = await this.tagsRepository.createQueryBuilder('t');
 
+    qb.limit(dto.limit || 3);
+
     if (dto.name) {
       await qb.andWhere(`t.name ILIKE :name`);
     }

@@ -1,4 +1,5 @@
 import { IsArray, IsString } from 'class-validator';
+import { TagEntity } from 'src/tags/tag.entity';
 
 export type OutputBlockData = {
   id?: number;
@@ -12,4 +13,7 @@ export class QuestionDto {
 
   @IsArray()
   readonly body: OutputBlockData[];
+
+  @IsArray()
+  readonly tags: TagEntity[];
 }
