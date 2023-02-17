@@ -1,5 +1,5 @@
 export class SearchTagDto {
-  readonly name?: string;
+  readonly search?: string;
   readonly limit?: number;
   readonly page?: number;
 }

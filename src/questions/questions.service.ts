@@ -44,6 +44,17 @@ export class QuestionsService {
       qb.innerJoin('q.tags', 'tag').where('tag.name = :tag', { tag });
     }
 
+    if (dto.userId) {
+      const user = dto.userId;
+      qb.innerJoin('q.user', 'user').where('user.id = :user', { user });
+    }
+
+    if (dto.search) {
+      qb.where('LOWER(q.title) LIKE LOWER(:title)', {
+        title: `%${dto.search}%`,
+      });
+    }
+
     const [questions, total] = await qb
       .leftJoinAndSelect('q.tags', 'tags')
       .getManyAndCount();

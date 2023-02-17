@@ -3,4 +3,6 @@ export class SearchQuestionDto {
   readonly page?: number;
   readonly orderBy?: string;
   readonly tagBy?: string;
+  readonly userId?: number;
+  readonly search?: string;
 }

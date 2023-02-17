@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilesService } from 'src/files/files.service';
 import { Repository } from 'typeorm';
-import { UserDto } from './user.dto';
+import { UserDto } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 import * as bcrypt from 'bcryptjs';
+import { ParamsUserDto } from './dto/params-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,9 +20,28 @@ export class UsersService {
     return user;
   }
 
-  async getAll() {
-    const users = await this.usersRepository.find();
-    return users;
+  async getAll(dto: ParamsUserDto) {
+    const qb = await this.usersRepository.createQueryBuilder('u');
+
+    const limit = dto.limit || 2;
+    const page = dto.page || 2;
+
+    if (dto.limit) {
+      qb.take(dto.limit);
+    }
+    if (dto.page) {
+      qb.skip((page - 1) * limit);
+    }
+
+    if (dto.search) {
+      qb.where('LOWER(u.login) LIKE LOWER(:login)', {
+        login: `%${dto.search}%`,
+      });
+    }
+
+    const [items, total] = await qb.getManyAndCount();
+
+    return { total, items };
   }
 
   async getUserByLogin(login: string) {

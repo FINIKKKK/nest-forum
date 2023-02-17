@@ -5,17 +5,18 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   Request,
 } from '@nestjs/common';
 import {
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { UserDto } from './user.dto';
+import { ParamsUserDto } from './dto/params-user.dto';
+import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -29,8 +30,8 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.getAll();
+  findAll(@Query() dto: ParamsUserDto) {
+    return this.usersService.getAll(dto);
   }
 
   @Get(':id')
