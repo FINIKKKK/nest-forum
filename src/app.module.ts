@@ -12,6 +12,8 @@ import * as path from 'path';
 import { UserEntity } from './users/user.entity';
 import { QuestionEntity } from './questions/question.entity';
 import { TagEntity } from './tags/tag.entity';
+import { AnswersModule } from './answers/answers.module';
+import { AnswerEntity } from './answers/answer.entity';
 
 @Module({
   imports: [
@@ -28,7 +30,7 @@ import { TagEntity } from './tags/tag.entity';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [UserEntity, QuestionEntity, TagEntity],
+      entities: [UserEntity, QuestionEntity, TagEntity, AnswerEntity],
       synchronize: true,
     }),
     UsersModule,
@@ -36,6 +38,7 @@ import { TagEntity } from './tags/tag.entity';
     FilesModule,
     QuestionsModule,
     TagsModule,
+    AnswersModule,
   ],
 })
 export class AppModule {}
