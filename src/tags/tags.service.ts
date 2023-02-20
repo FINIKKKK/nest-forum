@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SearchTagDto } from './dto/search-tag.dto';
@@ -13,7 +13,22 @@ export class TagsService {
   ) {}
 
   async createTag(dto: TagDto) {
-    const tag = await this.tagsRepository.save(dto);
+    const tagName = dto.name.toLocaleLowerCase();
+    const findTag = await this.tagsRepository.findOne({
+      where: { name: tagName },
+    });
+
+    if (findTag) {
+      throw new HttpException(
+        'Такая метка уже существует',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const tag = await this.tagsRepository.save({
+      ...dto,
+      name: tagName,
+    });
     return tag;
   }
 

@@ -38,7 +38,7 @@ export class AuthService {
   }
 
   async register(dto: UserDto) {
-    const findUserByName = await this.usersService.getUserByLogin(dto.login);
+    const findUserByName = await this.usersService.getUserByLogin(dto.login.toLocaleLowerCase());
     const findUserByEmail = await this.usersService.getUserByEmail(dto.email);
     if (findUserByName) {
       throw new HttpException(

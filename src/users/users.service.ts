@@ -16,7 +16,11 @@ export class UsersService {
   ) {}
 
   async createUser(dto: UserDto) {
-    const user = await this.usersRepository.save(dto);
+    const userName = dto.login.toLocaleLowerCase();
+    const user = await this.usersRepository.save({
+      ...dto,
+      login: userName,
+    });
     return user;
   }
 

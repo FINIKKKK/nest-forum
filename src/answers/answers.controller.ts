@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { UseGuards } from '@nestjs/common/decorators';
+import { Query, UseGuards } from '@nestjs/common/decorators';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { User } from 'src/users/user.decorator';
 import { AnswersService } from './answers.service';
 import { AnswerDto } from './dto/answer.dto';
+import { ParamsAnswerDto } from './dto/params-answer.dto';
+import { UpdateAnswerDto } from './dto/update-answer.dto';
 
 @Controller('answers')
 export class AnswersController {
@@ -25,8 +27,8 @@ export class AnswersController {
   }
 
   @Get()
-  findAll() {
-    return this.answersService.getAllAnswers();
+  findAll(@Query() dto: ParamsAnswerDto) {
+    return this.answersService.getAllAnswers(dto);
   }
 
   @Get(':id')
@@ -35,7 +37,7 @@ export class AnswersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() dto: AnswerDto) {
+  update(@Param('id') id: number, @Body() dto: UpdateAnswerDto) {
     return this.answersService.updateAnswer(id, dto);
   }
 

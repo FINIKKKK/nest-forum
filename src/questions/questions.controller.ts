@@ -13,7 +13,8 @@ import { QuestionsService } from './questions.service';
 import { QuestionDto } from './dto/question.dto';
 import { User } from 'src/users/user.decorator';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { SearchQuestionDto } from './dto/search-question.dto';
+import { ParamsQuestionDto } from './dto/params-question.dto';
+import { UpdateQuestionDto } from './dto/update-question.dto';
 
 @Controller('questions')
 export class QuestionsController {
@@ -26,7 +27,7 @@ export class QuestionsController {
   }
 
   @Get()
-  findAll(@Query() dto: SearchQuestionDto) {
+  findAll(@Query() dto: ParamsQuestionDto) {
     return this.questionsService.getAll(dto);
   }
 
@@ -36,7 +37,7 @@ export class QuestionsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() dto: QuestionDto) {
+  update(@Param('id') id: number, @Body() dto: UpdateQuestionDto) {
     return this.questionsService.updateQuestion(id, dto);
   }
 

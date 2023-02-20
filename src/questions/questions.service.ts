@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QuestionDto } from './dto/question.dto';
-import { SearchQuestionDto } from './dto/search-question.dto';
+import { ParamsQuestionDto } from './dto/params-question.dto';
+import { UpdateQuestionDto } from './dto/update-question.dto';
 import { QuestionEntity } from './question.entity';
+import { AnswerEntity } from 'src/answers/answer.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -20,7 +22,7 @@ export class QuestionsService {
     return question;
   }
 
-  async getAll(dto: SearchQuestionDto) {
+  async getAll(dto: ParamsQuestionDto) {
     const qb = await this.questionsRepository.createQueryBuilder('q');
 
     const limit = dto.limit || 2;
@@ -53,6 +55,12 @@ export class QuestionsService {
       qb.where('LOWER(q.title) LIKE LOWER(:title)', {
         title: `%${dto.search}%`,
       });
+    }
+
+    if (dto.isAnswer === 'true') {
+      qb.where('q.isAnswer IS TRUE');
+    } else if (dto.isAnswer === 'false') {
+      qb.where('q.isAnswer IS FALSE');
     }
 
     const [questions, total] = await qb
@@ -105,7 +113,7 @@ export class QuestionsService {
     };
   }
 
-  async updateQuestion(id: number, dto: QuestionDto) {
+  async updateQuestion(id: number, dto: UpdateQuestionDto) {
     const question = await this.questionsRepository.update(id, dto);
     return question;
   }

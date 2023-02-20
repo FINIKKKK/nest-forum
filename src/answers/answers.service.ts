@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AnswerEntity } from './answer.entity';
 import { AnswerDto } from './dto/answer.dto';
+import { ParamsAnswerDto } from './dto/params-answer.dto';
+import { UpdateAnswerDto } from './dto/update-answer.dto';
 
 @Injectable()
 export class AnswersService {
@@ -15,13 +17,47 @@ export class AnswersService {
     const answer = await this.answersRepository.save({
       ...dto,
       user: { id: userId },
+      question: { id: dto.questionId },
     });
     return answer;
   }
 
-  async getAllAnswers() {
-    const answers = await this.answersRepository.find();
-    return answers;
+  async getAllAnswers(dto: ParamsAnswerDto) {
+    const qb = this.answersRepository.createQueryBuilder('a');
+    const questionId = dto.questionId;
+
+    if (dto.questionId) {
+      qb.where('a.question = :questionId', { questionId });
+    }
+
+    if (dto.orderBy === 'date') {
+      qb.orderBy('q.createdAt', 'DESC');
+    } else {
+      qb.orderBy('q.rating', 'DESC');
+    }
+
+    const [items, total] = await qb
+      .leftJoinAndSelect('a.user', 'user')
+      .leftJoinAndSelect('a.question', 'question')
+      .getManyAndCount();
+
+    const questions = items.map((obj) => {
+      return {
+        ...obj,
+        user: {
+          id: obj.user.id,
+          login: obj.user.login,
+          firstName: obj.user.firstName,
+          lastName: obj.user.lastName,
+          avatar: obj.user.avatar,
+        },
+        question: {
+          id: obj.question.id,
+        },
+      };
+    });
+
+    return questions;
   }
 
   async getAnswerById(id: number) {
@@ -33,7 +69,7 @@ export class AnswersService {
     return answer;
   }
 
-  async updateAnswer(id: number, dto: AnswerDto) {
+  async updateAnswer(id: number, dto: UpdateAnswerDto) {
     const answer = await this.answersRepository.update(id, dto);
     return answer;
   }

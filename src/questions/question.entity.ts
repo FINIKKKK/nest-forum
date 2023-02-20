@@ -8,7 +8,6 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
 } from 'typeorm';
 import { OutputBlockData } from './dto/question.dto';
 
@@ -30,4 +29,7 @@ export class QuestionEntity extends Base {
   @ManyToMany(() => TagEntity, (tag) => tag.questions)
   @JoinTable()
   tags: TagEntity[];
+
+  @Column({ type: 'boolean', default: false })
+  isAnswer: boolean;
 }

@@ -1,4 +1,5 @@
 import { OutputBlockData } from 'src/questions/dto/question.dto';
+import { QuestionEntity } from 'src/questions/question.entity';
 import { UserEntity } from 'src/users/user.entity';
 import { Base } from 'src/utils/base';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
@@ -11,6 +12,10 @@ export class AnswerEntity extends Base {
   @ManyToOne(() => UserEntity, (user) => user.id)
   @JoinColumn({ name: 'user' })
   user: UserEntity;
+
+  @ManyToOne(() => QuestionEntity, (question) => question.id)
+  @JoinColumn({ name: 'question' })
+  question: QuestionEntity;
 
   @Column({ default: false })
   isAnswer: boolean;
