@@ -47,8 +47,7 @@ export class QuestionsService {
     }
 
     if (dto.userId) {
-      const user = dto.userId;
-      qb.innerJoin('q.user', 'user').where('user.id = :user', { user });
+      qb.innerJoin('q.user', 'user').where('user.id = :user', { user: dto.userId });
     }
 
     if (dto.search) {

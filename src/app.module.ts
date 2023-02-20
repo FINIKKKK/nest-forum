@@ -14,6 +14,8 @@ import { QuestionEntity } from './questions/question.entity';
 import { TagEntity } from './tags/tag.entity';
 import { AnswersModule } from './answers/answers.module';
 import { AnswerEntity } from './answers/answer.entity';
+import { CommentsModule } from './comments/comments.module';
+import { CommentEntity } from './comments/comment.entity';
 
 @Module({
   imports: [
@@ -30,7 +32,7 @@ import { AnswerEntity } from './answers/answer.entity';
       username: process.env.POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [UserEntity, QuestionEntity, TagEntity, AnswerEntity],
+      entities: [UserEntity, QuestionEntity, TagEntity, AnswerEntity, CommentEntity],
       synchronize: true,
     }),
     UsersModule,
@@ -39,6 +41,7 @@ import { AnswerEntity } from './answers/answer.entity';
     QuestionsModule,
     TagsModule,
     AnswersModule,
+    CommentsModule,
   ],
 })
 export class AppModule {}

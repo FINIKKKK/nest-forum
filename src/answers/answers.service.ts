@@ -31,9 +31,9 @@ export class AnswersService {
     }
 
     if (dto.orderBy === 'date') {
-      qb.orderBy('q.createdAt', 'DESC');
+      qb.orderBy('a.createdAt', 'DESC');
     } else {
-      qb.orderBy('q.rating', 'DESC');
+      qb.orderBy('a.rating', 'DESC');
     }
 
     const [items, total] = await qb
