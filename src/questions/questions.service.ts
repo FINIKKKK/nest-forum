@@ -6,12 +6,17 @@ import { ParamsQuestionDto } from './dto/params-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { QuestionEntity } from './question.entity';
 import { AnswerEntity } from 'src/answers/answer.entity';
+import { CommentEntity } from 'src/comments/comment.entity';
 
 @Injectable()
 export class QuestionsService {
   constructor(
     @InjectRepository(QuestionEntity)
     private questionsRepository: Repository<QuestionEntity>,
+    @InjectRepository(AnswerEntity)
+    private answersRepository: Repository<AnswerEntity>,
+    @InjectRepository(CommentEntity)
+    private commentsRepository: Repository<CommentEntity>,
   ) {}
 
   async createQuestion(dto: QuestionDto, userId: number) {
@@ -47,7 +52,9 @@ export class QuestionsService {
     }
 
     if (dto.userId) {
-      qb.innerJoin('q.user', 'user').where('user.id = :user', { user: dto.userId });
+      qb.innerJoin('q.user', 'user').where('user.id = :user', {
+        user: dto.userId,
+      });
     }
 
     if (dto.search) {
@@ -118,7 +125,16 @@ export class QuestionsService {
   }
 
   async removeQuestion(id: number) {
-    const question = await this.questionsRepository.delete(id);
-    return question;
+    const answers = await this.answersRepository.find({
+      where: { question: { id } },
+    });
+
+    for (const answer of answers) {
+      await this.commentsRepository.delete({ answer: { id: answer.id } });
+    }
+
+    await this.answersRepository.delete({ question: { id } });
+
+    await this.questionsRepository.delete(id);
   }
 }

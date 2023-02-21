@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CommentEntity } from 'src/comments/comment.entity';
+import { CommentsService } from 'src/comments/comments.service';
 import { Repository } from 'typeorm';
 import { AnswerEntity } from './answer.entity';
 import { AnswerDto } from './dto/answer.dto';
@@ -11,6 +13,8 @@ export class AnswersService {
   constructor(
     @InjectRepository(AnswerEntity)
     private answersRepository: Repository<AnswerEntity>,
+    @InjectRepository(CommentEntity)
+    private commentsRepository: Repository<CommentEntity>,
   ) {}
 
   async createAnswer(dto: AnswerDto, userId: number) {
@@ -75,7 +79,7 @@ export class AnswersService {
   }
 
   async removeAnswer(id: number) {
-    const answer = await this.answersRepository.delete(id);
-    return answer;
+    await this.commentsRepository.delete({ answer: { id } });
+    await this.answersRepository.delete(id);
   }
 }

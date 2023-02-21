@@ -4,10 +4,15 @@ import { AnswersController } from './answers.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnswerEntity } from './answer.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { CommentsModule } from 'src/comments/comments.module';
+import { CommentEntity } from 'src/comments/comment.entity';
 
 @Module({
   controllers: [AnswersController],
   providers: [AnswersService],
-  imports: [TypeOrmModule.forFeature([AnswerEntity]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([AnswerEntity, CommentEntity]),
+    AuthModule,
+  ],
 })
 export class AnswersModule {}
