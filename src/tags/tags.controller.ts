@@ -21,11 +21,6 @@ export class TagsController {
     return this.tagsService.createTag(dto);
   }
 
-  @Get('/search')
-  search(@Query() dto: SearchTagDto) {
-    return this.tagsService.searchTags(dto);
-  }
-
   @Get()
   findAll(@Query() dto: SearchTagDto) {
     return this.tagsService.getAll(dto);

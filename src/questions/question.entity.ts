@@ -1,5 +1,6 @@
 import { TagEntity } from 'src/tags/tag.entity';
 import { UserEntity } from 'src/users/user.entity';
+import { AnswerEntity } from 'src/answers/answer.entity';
 import { Base } from 'src/utils/base';
 import {
   Column,
@@ -8,6 +9,8 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
+  RelationCount,
 } from 'typeorm';
 import { OutputBlockData } from './dto/question.dto';
 
@@ -25,6 +28,12 @@ export class QuestionEntity extends Base {
   @ManyToOne(() => UserEntity, (user) => user.id)
   @JoinColumn({ name: 'user' })
   user: UserEntity;
+
+  @OneToMany(() => AnswerEntity, (answer) => answer.question)
+  answers: AnswerEntity[];
+
+  @RelationCount((question: QuestionEntity) => question.answers)
+  answerCount: number;
 
   @ManyToMany(() => TagEntity, (tag) => tag.questions)
   @JoinTable()

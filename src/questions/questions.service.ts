@@ -7,6 +7,7 @@ import { UpdateQuestionDto } from './dto/update-question.dto';
 import { QuestionEntity } from './question.entity';
 import { AnswerEntity } from 'src/answers/answer.entity';
 import { CommentEntity } from 'src/comments/comment.entity';
+import { TagEntity } from 'src/tags/tag.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -28,7 +29,7 @@ export class QuestionsService {
   }
 
   async getAll(dto: ParamsQuestionDto) {
-    const qb = await this.questionsRepository.createQueryBuilder('q');
+    const qb = await this.questionsRepository.createQueryBuilder('questions');
 
     const limit = dto.limit || 2;
     const page = dto.page || 2;
@@ -41,36 +42,36 @@ export class QuestionsService {
     }
 
     if (dto.orderBy === 'popular') {
-      qb.orderBy('q.views', 'DESC');
+      qb.orderBy('questions.views', 'DESC');
     } else {
-      qb.orderBy('q.createdAt', 'DESC');
+      qb.orderBy('questions.createdAt', 'DESC');
     }
 
     if (dto.tagBy) {
       const tag = dto.tagBy;
-      qb.innerJoin('q.tags', 'tag').where('tag.name = :tag', { tag });
+      qb.innerJoin('questions.tags', 'tag').where('tag.name = :tag', { tag });
     }
 
     if (dto.userId) {
-      qb.innerJoin('q.user', 'user').where('user.id = :user', {
+      qb.innerJoin('questions.user', 'user').where('user.id = :user', {
         user: dto.userId,
       });
     }
 
     if (dto.search) {
-      qb.where('LOWER(q.title) LIKE LOWER(:title)', {
+      qb.where('LOWER(questions.title) LIKE LOWER(:title)', {
         title: `%${dto.search}%`,
       });
     }
 
     if (dto.isAnswer === 'true') {
-      qb.where('q.isAnswer IS TRUE');
+      qb.where('questions.isAnswer IS TRUE');
     } else if (dto.isAnswer === 'false') {
-      qb.where('q.isAnswer IS FALSE');
+      qb.where('questions.isAnswer IS FALSE');
     }
 
     const [questions, total] = await qb
-      .leftJoinAndSelect('q.tags', 'tags')
+      .leftJoinAndSelect('questions.tags', 'tags')
       .getManyAndCount();
 
     const items = questions.map((obj) => {

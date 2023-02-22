@@ -88,8 +88,21 @@ export class CommentsService {
   }
 
   async updateComment(id: number, dto: CommentDto) {
-    const comment = await this.commentsRepository.update(id, dto);
-    return comment;
+    await this.commentsRepository.update(id, dto);
+
+    const comment = await this.commentsRepository
+      .createQueryBuilder('c')
+      .whereInIds(id)
+      .leftJoinAndSelect('c.user', 'user')
+      .getOne();
+
+    return {
+      ...comment,
+      user: {
+        id: comment.user.id,
+        login: comment.user.login,
+      },
+    };
   }
 
   async removeComment(id: number) {

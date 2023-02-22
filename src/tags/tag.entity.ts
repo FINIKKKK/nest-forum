@@ -1,6 +1,6 @@
-import { QuestionEntity } from 'src/questions/question.entity';
+import { Column, Entity, JoinColumn, ManyToMany, RelationCount } from 'typeorm';
 import { Base } from 'src/utils/base';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { QuestionEntity } from 'src/questions/question.entity';
 
 @Entity('tags')
 export class TagEntity extends Base {
@@ -12,4 +12,7 @@ export class TagEntity extends Base {
 
   @ManyToMany(() => QuestionEntity, (question) => question.tags)
   questions: QuestionEntity[];
+
+  @RelationCount((tag: TagEntity) => tag.questions)
+  questionCount: number;
 }

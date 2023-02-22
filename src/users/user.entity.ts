@@ -1,5 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, RelationCount } from 'typeorm';
 import { Base } from 'src/utils/base';
+import { QuestionEntity } from 'src/questions/question.entity';
+import { AnswerEntity } from 'src/answers/answer.entity';
 
 @Entity('users')
 export class UserEntity extends Base {
@@ -20,4 +22,16 @@ export class UserEntity extends Base {
 
   @Column({ nullable: true })
   avatar: string;
+
+  @OneToMany(() => QuestionEntity, (question) => question.user)
+  questions: QuestionEntity[];
+
+  @RelationCount((user: UserEntity) => user.questions)
+  questionCount: number;
+
+  @OneToMany(() => AnswerEntity, (answer) => answer.user)
+  answers: AnswerEntity[];
+
+  @RelationCount((user: UserEntity) => user.answers)
+  answerCount: number;
 }

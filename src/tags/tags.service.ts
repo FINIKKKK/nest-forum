@@ -33,7 +33,7 @@ export class TagsService {
   }
 
   async getAll(dto: SearchTagDto) {
-    const qb = await this.tagsRepository.createQueryBuilder('t');
+    const qb = await this.tagsRepository.createQueryBuilder('tags');
 
     const limit = dto.limit || 2;
     const page = dto.page || 2;
@@ -46,30 +46,17 @@ export class TagsService {
     }
 
     if (dto.search) {
-      qb.where('LOWER(t.name) LIKE LOWER(:name)', {
+      qb.where('LOWER(tags.name) LIKE LOWER(:name)', {
         name: `%${dto.search}%`,
       });
     }
 
-    const [items, total] = await qb.getManyAndCount();
-
-    return { total, items };
-  }
-
-  async searchTags(dto: SearchTagDto) {
-    const qb = await this.tagsRepository.createQueryBuilder('t');
-
-    qb.limit(dto.limit || 3);
-
-    if (dto.search) {
-      await qb.andWhere(`t.name ILIKE :name`);
-    }
-
-    await qb.setParameters({
-      name: `%${dto.search}%`,
-    });
-
-    const [items, total] = await qb.getManyAndCount();
+    const [items, total] = await qb
+      .addSelect('COUNT(questions.id) as questionCount2')
+      .leftJoin('tags.questions', 'questions')
+      .groupBy('tags.id')
+      .orderBy('questionCount2', 'DESC')
+      .getManyAndCount();
 
     return { total, items };
   }
