@@ -14,7 +14,6 @@ import { QuestionDto } from './dto/question.dto';
 import { User } from 'src/users/user.decorator';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { ParamsQuestionDto } from './dto/params-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
 
 @Controller('questions')
 export class QuestionsController {
@@ -37,7 +36,7 @@ export class QuestionsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() dto: UpdateQuestionDto) {
+  update(@Param('id') id: number, @Body() dto: QuestionDto) {
     return this.questionsService.updateQuestion(id, dto);
   }
 

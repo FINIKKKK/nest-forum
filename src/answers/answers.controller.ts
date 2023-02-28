@@ -13,7 +13,6 @@ import { User } from 'src/users/user.decorator';
 import { AnswersService } from './answers.service';
 import { AnswerDto } from './dto/answer.dto';
 import { ParamsAnswerDto } from './dto/params-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
 
 @Controller('answers')
 export class AnswersController {
@@ -37,7 +36,7 @@ export class AnswersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() dto: UpdateAnswerDto) {
+  update(@Param('id') id: number, @Body() dto: AnswerDto) {
     return this.answersService.updateAnswer(id, dto);
   }
 

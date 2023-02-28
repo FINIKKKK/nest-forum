@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentEntity } from 'src/comments/comment.entity';
-import { CommentsService } from 'src/comments/comments.service';
 import { Repository } from 'typeorm';
 import { AnswerEntity } from './answer.entity';
 import { AnswerDto } from './dto/answer.dto';
 import { ParamsAnswerDto } from './dto/params-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
 
 @Injectable()
 export class AnswersService {
@@ -73,7 +71,7 @@ export class AnswersService {
     return answer;
   }
 
-  async updateAnswer(id: number, dto: UpdateAnswerDto) {
+  async updateAnswer(id: number, dto: AnswerDto) {
     const answer = await this.answersRepository.update(id, dto);
     return answer;
   }

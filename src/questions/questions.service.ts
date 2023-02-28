@@ -3,11 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QuestionDto } from './dto/question.dto';
 import { ParamsQuestionDto } from './dto/params-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
 import { QuestionEntity } from './question.entity';
 import { AnswerEntity } from 'src/answers/answer.entity';
 import { CommentEntity } from 'src/comments/comment.entity';
-import { TagEntity } from 'src/tags/tag.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -120,7 +118,7 @@ export class QuestionsService {
     };
   }
 
-  async updateQuestion(id: number, dto: UpdateQuestionDto) {
+  async updateQuestion(id: number, dto: QuestionDto) {
     const question = await this.questionsRepository.update(id, dto);
     return question;
   }

@@ -35,6 +35,11 @@ export class TagsService {
   async getAll(dto: SearchTagDto) {
     const qb = await this.tagsRepository.createQueryBuilder('tags');
 
+    // await qb.addSelect('COUNT(questions.id) as questionCount2')
+    //   .leftJoin('tags.questions', 'questions')
+    //   .groupBy('tags.id')
+    //   .orderBy('questionCount2', 'DESC');
+
     const limit = dto.limit || 2;
     const page = dto.page || 2;
 
@@ -51,12 +56,7 @@ export class TagsService {
       });
     }
 
-    const [items, total] = await qb
-      .addSelect('COUNT(questions.id) as questionCount2')
-      .leftJoin('tags.questions', 'questions')
-      .groupBy('tags.id')
-      .orderBy('questionCount2', 'DESC')
-      .getManyAndCount();
+    const [items, total] = await qb.getManyAndCount();
 
     return { total, items };
   }
