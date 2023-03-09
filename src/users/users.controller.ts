@@ -39,14 +39,15 @@ export class UsersController {
     return this.usersService.getUserById(id);
   }
 
-  @Patch(':id')
+  @Patch('/avatar/:id')
   @UseInterceptors(FileInterceptor('avatar'))
-  update(
-    @Param('id') id: number,
-    @Body() dto: UserDto,
-    @UploadedFile() avatar,
-  ) {
-    return this.usersService.updateUser(id, dto, avatar);
+  updateAvatar(@Param('id') id: number, @UploadedFile() avatar) {
+    return this.usersService.updateUserAvatar(id, avatar);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: number, @Body() dto: UserDto) {
+    return this.usersService.updateUser(id, dto);
   }
 
   @Delete(':id')

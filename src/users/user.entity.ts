@@ -15,10 +15,7 @@ export class UserEntity extends Base {
   password: string;
 
   @Column({ nullable: true })
-  firstName?: string;
-
-  @Column({ nullable: true })
-  lastName?: string;
+  name?: string;
 
   @Column({ nullable: true })
   avatar: string;
@@ -34,4 +31,10 @@ export class UserEntity extends Base {
 
   @RelationCount((user: UserEntity) => user.answers)
   answerCount: number;
+
+  @Column({ nullable: true })
+  about?: string;
+
+  @Column({ nullable: true })
+  location?: string;
 }

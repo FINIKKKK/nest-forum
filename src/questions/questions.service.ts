@@ -70,6 +70,7 @@ export class QuestionsService {
 
     const [questions, total] = await qb
       .leftJoinAndSelect('questions.tags', 'tags')
+      .leftJoinAndSelect('questions.user', 'user')
       .getManyAndCount();
 
     const items = questions.map((obj) => {
@@ -80,6 +81,9 @@ export class QuestionsService {
           id: item.id,
           name: item.name,
         })),
+        user: {
+          id: obj.user.id,
+        },
       };
     });
     return { total, items };
@@ -107,8 +111,7 @@ export class QuestionsService {
       user: {
         id: question.user.id,
         login: question.user.login,
-        firstName: question.user.firstName,
-        lastName: question.user.lastName,
+        name: question.user.name,
         avatar: question.user.avatar,
       },
       tags: question.tags.map((obj) => ({

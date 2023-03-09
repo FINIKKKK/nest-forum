@@ -15,9 +15,11 @@ export class UserDto {
   @Length(9, Number.MAX_SAFE_INTEGER, {
     message: 'Пароль должен состоять минимум из 9 символов',
   })
-  readonly password: string;
+  readonly password?: string;
 
-  readonly firstName?: string;
+  readonly name?: string;
 
-  readonly lastName?: string;
+  readonly about?: string;
+
+  readonly location?: string;
 }

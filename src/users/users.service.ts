@@ -6,6 +6,7 @@ import { UserDto } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ParamsUserDto } from './dto/params-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -63,16 +64,22 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(id: number, dto: UserDto, avatar: any) {
+  async updateUserAvatar(id: number, avatar: any) {
     const fileName = await this.fileService.uploadImage(avatar, {
       imagePath: 'avatars',
     });
 
+    await this.usersRepository.update(id, {
+      avatar: fileName,
+    });
+    return fileName;
+  }
+
+  async updateUser(id: number, dto: UpdateUserDto) {
     const hashPassword = await bcrypt.hash(dto.password, 5);
     const user = await this.usersRepository.update(id, {
       ...dto,
       password: hashPassword,
-      avatar: fileName,
     });
     return user;
   }

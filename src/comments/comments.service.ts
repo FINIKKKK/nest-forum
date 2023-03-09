@@ -54,8 +54,7 @@ export class CommentsService {
         user: {
           id: obj.user.id,
           login: obj.user.login,
-          firstName: obj.user.firstName,
-          lastName: obj.user.lastName,
+          name: obj.user.name,
         },
         question: null,
         answer: null,
