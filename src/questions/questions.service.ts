@@ -29,6 +29,8 @@ export class QuestionsService {
   async getAll(dto: ParamsQuestionDto) {
     const qb = await this.questionsRepository.createQueryBuilder('questions');
 
+    qb.leftJoinAndSelect('questions.user', 'user')
+
     const limit = dto.limit || 2;
     const page = dto.page || 2;
 
@@ -51,7 +53,7 @@ export class QuestionsService {
     }
 
     if (dto.userId) {
-      qb.innerJoin('questions.user', 'user').where('user.id = :user', {
+      qb.where('user.id = :user', {
         user: dto.userId,
       });
     }
@@ -70,7 +72,6 @@ export class QuestionsService {
 
     const [questions, total] = await qb
       .leftJoinAndSelect('questions.tags', 'tags')
-      .leftJoinAndSelect('questions.user', 'user')
       .getManyAndCount();
 
     const items = questions.map((obj) => {
