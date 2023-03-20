@@ -6,12 +6,13 @@ import { UserEntity } from './user.entity';
 import { FilesModule } from 'src/files/files.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from 'src/auth/auth.module';
+import { QuestionEntity } from 'src/questions/question.entity';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
   imports: [
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, QuestionEntity]),
     FilesModule,
     forwardRef(() => AuthModule),
   ],

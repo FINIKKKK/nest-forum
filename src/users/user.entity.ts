@@ -37,4 +37,7 @@ export class UserEntity extends Base {
 
   @Column({ nullable: true })
   location?: string;
+
+  @Column('integer', { array: true, nullable: true })
+  favorite?: Number[];
 }

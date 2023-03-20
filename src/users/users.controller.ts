@@ -8,6 +8,7 @@ import {
   Request,
 } from '@nestjs/common';
 import {
+  Post,
   Query,
   UploadedFile,
   UseGuards,
@@ -37,6 +38,12 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.usersService.getUserById(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/favorite')
+  favorite(@Request() req, @Body() questionId: number) {
+    return this.usersService.addQuestionToFavorite(req.user.id, questionId);
   }
 
   @Patch('/avatar/:id')

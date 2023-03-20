@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilesService } from 'src/files/files.service';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { UserEntity } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ParamsUserDto } from './dto/params-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { QuestionEntity } from 'src/questions/question.entity';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,8 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
     private fileService: FilesService,
+    @InjectRepository(QuestionEntity)
+    private questionRepository: Repository<QuestionEntity>,
   ) {}
 
   async createUser(dto: UserDto) {
@@ -62,6 +65,26 @@ export class UsersService {
   async getUserById(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
     return user;
+  }
+
+  async addQuestionToFavorite(userId: number, questionId: number) {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new HttpException('Пользователь не найден', HttpStatus.BAD_REQUEST);
+    }
+
+    const question = await this.questionRepository.findOne({
+      where: { id: questionId },
+    });
+    if (!question) {
+      throw new HttpException('Вопрос не найден', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!user.favorite.includes(questionId)) {
+      user.favorite.push(questionId);
+      await this.usersRepository.save(user);
+    }
+    return { user };
   }
 
   async updateUserAvatar(id: number, avatar: any) {
