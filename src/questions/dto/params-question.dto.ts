@@ -6,4 +6,5 @@ export class ParamsQuestionDto {
   readonly userId?: number;
   readonly search?: string;
   readonly isAnswer?: string;
+  readonly favorites?: boolean;
 }

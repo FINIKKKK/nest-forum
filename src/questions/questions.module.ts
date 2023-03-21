@@ -6,12 +6,13 @@ import { QuestionEntity } from './question.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { AnswerEntity } from 'src/answers/answer.entity';
 import { CommentEntity } from 'src/comments/comment.entity';
+import { UserEntity } from 'src/users/user.entity';
 
 @Module({
   controllers: [QuestionsController],
   providers: [QuestionsService],
   imports: [
-    TypeOrmModule.forFeature([QuestionEntity, AnswerEntity, CommentEntity]),
+    TypeOrmModule.forFeature([QuestionEntity, AnswerEntity, CommentEntity, UserEntity]),
     AuthModule,
   ],
 })

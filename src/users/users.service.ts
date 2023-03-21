@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilesService } from 'src/files/files.service';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 import * as bcrypt from 'bcryptjs';
@@ -80,10 +80,13 @@ export class UsersService {
       throw new HttpException('Вопрос не найден', HttpStatus.BAD_REQUEST);
     }
 
-    if (!user.favorite.includes(questionId)) {
-      user.favorite.push(questionId);
-      await this.usersRepository.save(user);
+    if (user.favorites.includes(question.id)) {
+      user.favorites = user.favorites.filter((id) => id !== question.id);
+    } else {
+      user.favorites.push(question.id);
     }
+    await this.usersRepository.save(user);
+
     return { user };
   }
 

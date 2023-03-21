@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, RelationCount } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  RelationCount,
+} from 'typeorm';
 import { Base } from 'src/utils/base';
 import { QuestionEntity } from 'src/questions/question.entity';
 import { AnswerEntity } from 'src/answers/answer.entity';
@@ -38,6 +45,10 @@ export class UserEntity extends Base {
   @Column({ nullable: true })
   location?: string;
 
-  @Column('integer', { array: true, nullable: true })
-  favorite?: Number[];
+  // @ManyToMany(() => QuestionEntity, (question) => question.id)
+  // @JoinTable()
+  // favorites?: QuestionEntity[];
+
+  @Column({ type: 'jsonb', default: [] })
+  favorites!: Number[];
 }

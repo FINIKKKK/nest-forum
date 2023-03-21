@@ -6,6 +6,7 @@ import { ParamsQuestionDto } from './dto/params-question.dto';
 import { QuestionEntity } from './question.entity';
 import { AnswerEntity } from 'src/answers/answer.entity';
 import { CommentEntity } from 'src/comments/comment.entity';
+import { UserEntity } from 'src/users/user.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -16,6 +17,8 @@ export class QuestionsService {
     private answersRepository: Repository<AnswerEntity>,
     @InjectRepository(CommentEntity)
     private commentsRepository: Repository<CommentEntity>,
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
   ) {}
 
   async createQuestion(dto: QuestionDto, userId: number) {
@@ -29,7 +32,7 @@ export class QuestionsService {
   async getAll(dto: ParamsQuestionDto) {
     const qb = await this.questionsRepository.createQueryBuilder('questions');
 
-    qb.leftJoinAndSelect('questions.user', 'user')
+    qb.leftJoinAndSelect('questions.user', 'user');
 
     const limit = dto.limit || 2;
     const page = dto.page || 2;
@@ -68,6 +71,13 @@ export class QuestionsService {
       qb.where('questions.isAnswer IS TRUE');
     } else if (dto.isAnswer === 'false') {
       qb.where('questions.isAnswer IS FALSE');
+    }
+
+    if (dto.favorites && dto.userId) {
+      const user = await this.usersRepository.findOne({
+        where: { id: dto.userId },
+      });
+      qb.where('questions.id IN (:...ids)', { ids: user.favorites });
     }
 
     const [questions, total] = await qb

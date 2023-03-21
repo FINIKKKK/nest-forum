@@ -70,6 +70,4 @@ export class AuthService {
     const payload = { id: user.id, name: user.login, email: user.email };
     return this.jwtService.sign(payload);
   }
-
-  private validateUser(user: UserEntity) {}
 }

@@ -25,6 +25,12 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
+  @Post('/favorite')
+  favorite(@Request() req, @Body() dto: { questionId: number }) {
+    return this.usersService.addQuestionToFavorite(req.user.id, dto.questionId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('/profile')
   getProfile(@Request() req) {
     return this.usersService.getUserById(req.user.id);
@@ -35,15 +41,9 @@ export class UsersController {
     return this.usersService.getAll(dto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.usersService.getUserById(id);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('/favorite')
-  favorite(@Request() req, @Body() questionId: number) {
-    return this.usersService.addQuestionToFavorite(req.user.id, questionId);
+  @Get(':login')
+  findOne(@Param('login') login: number) {
+    return this.usersService.getUserByLogin(`${login}`);
   }
 
   @Patch('/avatar/:id')
