@@ -6,10 +6,11 @@ import { JwtModule } from '@nestjs/jwt/dist';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { UserEntity } from 'src/users/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GithubStrategy } from './strategies/github.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy],
+  providers: [AuthService, GoogleStrategy, GithubStrategy],
   imports: [
     forwardRef(() => UsersModule),
     JwtModule.register({

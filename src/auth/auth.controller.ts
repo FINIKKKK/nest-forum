@@ -28,11 +28,21 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async auth() {}
+  async authGoogle() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req) {
+    console.log(req.user);
+  }
+
+  @Get('github')
+  @UseGuards(AuthGuard('github'))
+  async authGithub() {}
+
+  @Get('github/callback')
+  @UseGuards(AuthGuard('github'))
+  async githubAuthCallback(@Req() req) {
     console.log(req.user);
   }
 }
