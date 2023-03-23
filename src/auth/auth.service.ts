@@ -38,7 +38,9 @@ export class AuthService {
   }
 
   async register(dto: UserDto) {
-    const findUserByName = await this.usersService.getUserByLogin(dto.login.toLocaleLowerCase());
+    const findUserByName = await this.usersService.getUserByLogin(
+      dto.login.toLocaleLowerCase(),
+    );
     const findUserByEmail = await this.usersService.getUserByEmail(dto.email);
     if (findUserByName) {
       throw new HttpException(
@@ -52,12 +54,14 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-
-    const hashPassword = await bcrypt.hash(dto.password, 5);
+    const hashPassword = dto.password
+      ? await bcrypt.hash(dto.password, 5)
+      : null;
     const user = await this.usersService.createUser({
       ...dto,
       password: hashPassword,
     });
+
     const { password, ...userData } = user;
     const token = await this.generateToken(user);
     return {

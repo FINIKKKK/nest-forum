@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilesService } from 'src/files/files.service';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 import * as bcrypt from 'bcryptjs';
@@ -20,7 +20,7 @@ export class UsersService {
   ) {}
 
   async createUser(dto: UserDto) {
-    const userName = dto.login.toLocaleLowerCase();
+    const userName = dto.login.replace(/ /g, '_').toLocaleLowerCase();
     const user = await this.usersRepository.save({
       ...dto,
       login: userName,

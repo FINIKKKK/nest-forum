@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
 
 export class UserDto {
   @IsString({ message: 'Поле должно быть строкой' })
@@ -11,6 +11,7 @@ export class UserDto {
   @IsEmail({}, { message: 'Некорректный email' })
   readonly email: string;
 
+  @IsOptional()
   @IsString({ message: 'Поле должно быть строкой' })
   @Length(9, Number.MAX_SAFE_INTEGER, {
     message: 'Пароль должен состоять минимум из 9 символов',

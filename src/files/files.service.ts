@@ -27,7 +27,10 @@ export class FilesService {
           fs.mkdirSync(filePath, { recursive: true });
         }
         fs.writeFileSync(path.join(filePath, fileName), image.buffer);
-        return fileName;
+        const fullFileName = `${process.env.SITE_PATH}/img${
+          '/' + dto.imagePath
+        }/${fileName}`;
+        return fullFileName;
       }
       throw new BadRequestException(
         'Файл должен быть расширением png, jpg, jpeg',

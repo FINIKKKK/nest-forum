@@ -4,9 +4,9 @@ The project is a backend part of the thesis, which is a forum for programmers. I
 
 📌Frontend: https://github.com/FINIKKKK/next-diplom-forum
 
-Framework: **NestJS**
-ORM: **TypeOrm**
-DB: **Postgress**
+- Framework: **NestJS**
+- ORM: **TypeOrm**
+- DB: **Postgress**
 
 ## Backend includes functionality 🛠:
 - Authorization and registration with JWT
