@@ -17,6 +17,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { ParamsUserDto } from './dto/params-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 
@@ -53,7 +54,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() dto: UserDto) {
+  update(@Param('id') id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.updateUser(id, dto);
   }
 

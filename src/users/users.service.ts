@@ -102,10 +102,13 @@ export class UsersService {
   }
 
   async updateUser(id: number, dto: UpdateUserDto) {
-    const hashPassword = await bcrypt.hash(dto.password, 5);
+    dto.password;
+    const hashPassword = dto.password
+      ? await bcrypt.hash(dto.password, 5)
+      : undefined;
     const user = await this.usersRepository.update(id, {
       ...dto,
-      password: hashPassword,
+      ...(hashPassword && { password: hashPassword }),
     });
     return user;
   }

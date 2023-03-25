@@ -55,29 +55,33 @@ export class QuestionsService {
       qb.innerJoin('questions.tags', 'tag').where('tag.name = :tag', { tag });
     }
 
-    if (dto.userId) {
+    if (dto.userId && !dto.favorites) {
       qb.where('user.id = :user', {
         user: dto.userId,
       });
-    }
-
-    if (dto.search) {
-      qb.where('LOWER(questions.title) LIKE LOWER(:title)', {
-        title: `%${dto.search}%`,
-      });
-    }
-
-    if (dto.isAnswer === 'true') {
-      qb.where('questions.isAnswer IS TRUE');
-    } else if (dto.isAnswer === 'false') {
-      qb.where('questions.isAnswer IS FALSE');
     }
 
     if (dto.favorites && dto.userId) {
       const user = await this.usersRepository.findOne({
         where: { id: dto.userId },
       });
-      qb.where('questions.id IN (:...ids)', { ids: user.favorites });
+      if (!!user.favorites.length) {
+        qb.where('questions.id IN (:...ids)', { ids: user.favorites });
+      } else {
+        qb.where('1=0');
+      }
+    }
+
+    if (dto.search) {
+      qb.andWhere('LOWER(questions.title) LIKE LOWER(:title)', {
+        title: `%${dto.search}%`,
+      });
+    }
+
+    if (dto.isAnswer === 'true') {
+      qb.andWhere('questions.isAnswer IS TRUE');
+    } else if (dto.isAnswer === 'false') {
+      qb.andWhere('questions.isAnswer IS FALSE');
     }
 
     const [questions, total] = await qb

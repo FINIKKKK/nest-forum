@@ -51,4 +51,7 @@ export class UserEntity extends Base {
 
   @Column({ type: 'jsonb', default: [] })
   favorites!: Number[];
+
+  @Column({ default: true })
+  showEmail: boolean;
 }
