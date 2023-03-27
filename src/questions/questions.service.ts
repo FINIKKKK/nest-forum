@@ -7,6 +7,7 @@ import { QuestionEntity } from './question.entity';
 import { AnswerEntity } from 'src/answers/answer.entity';
 import { CommentEntity } from 'src/comments/comment.entity';
 import { UserEntity } from 'src/users/user.entity';
+import { TagEntity } from 'src/tags/tag.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -19,6 +20,8 @@ export class QuestionsService {
     private commentsRepository: Repository<CommentEntity>,
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
+    @InjectRepository(TagEntity)
+    private tagsRepository: Repository<TagEntity>,
   ) {}
 
   async createQuestion(dto: QuestionDto, userId: number) {
@@ -137,7 +140,15 @@ export class QuestionsService {
   }
 
   async updateQuestion(id: number, dto: QuestionDto) {
-    const question = await this.questionsRepository.update(id, dto);
+    const question = await this.questionsRepository.findOne({ where: { id } });
+
+    const tagIds = dto.tags.map((obj) => obj.id);
+    const tags = await this.tagsRepository.findByIds(tagIds);
+    question.tags = tags;
+    delete dto.tags;
+
+    await this.questionsRepository.save(question);
+    await this.questionsRepository.update(id, dto);
     return question;
   }
 

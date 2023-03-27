@@ -9,5 +9,5 @@ export type OutputBlockData = {
 export class QuestionDto {
   readonly title: string;
   readonly body: OutputBlockData[];
-  readonly tags: TagEntity[];
+  tags: TagEntity[];
 }

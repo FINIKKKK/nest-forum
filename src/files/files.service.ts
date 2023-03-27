@@ -36,10 +36,14 @@ export class FilesService {
         'Файл должен быть расширением png, jpg, jpeg',
       );
     } catch (err) {
-      throw new HttpException(
-        'Не удалось загрузить файл',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (err instanceof BadRequestException) {
+        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      } else {
+        throw new HttpException(
+          'Не удалось загрузить файл',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     }
   }
 }

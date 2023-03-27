@@ -33,9 +33,11 @@ export class AnswersService {
     }
 
     if (dto.orderBy === 'date') {
-      qb.orderBy('a.createdAt', 'DESC');
+      qb.orderBy('a.isAnswer', 'DESC');
+      qb.addOrderBy('a.createdAt', 'DESC');
     } else {
-      qb.orderBy('a.rating', 'DESC');
+      qb.orderBy('a.isAnswer', 'DESC');
+      qb.addOrderBy('a.rating', 'DESC');
     }
 
     const [items, total] = await qb
@@ -67,6 +69,24 @@ export class AnswersService {
         id,
       },
     });
+    return answer;
+  }
+
+  async setAnswerIsSolved(id: number, dto: AnswerDto) {
+    const qb = this.answersRepository
+      .createQueryBuilder('answers')
+      .leftJoinAndSelect('answers.question', 'question');
+    await qb
+      .update()
+      .set({ isAnswer: false })
+      .where('answers.question = :questionId', {
+        questionId: dto.questionId,
+      })
+      .execute();
+
+    delete dto.questionId;
+    const answer = await this.answersRepository.update(id, dto);
+
     return answer;
   }
 

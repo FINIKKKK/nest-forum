@@ -35,6 +35,11 @@ export class AnswersController {
     return this.answersService.getAnswerById(id);
   }
 
+  @Patch('/isAnswer/:id')
+  setIsSolved(@Param('id') id: number, @Body() dto: AnswerDto) {
+    return this.answersService.setAnswerIsSolved(id, dto);
+  }
+
   @Patch(':id')
   update(@Param('id') id: number, @Body() dto: AnswerDto) {
     return this.answersService.updateAnswer(id, dto);
