@@ -142,11 +142,13 @@ export class QuestionsService {
   async updateQuestion(id: number, dto: QuestionDto) {
     const question = await this.questionsRepository.findOne({ where: { id } });
 
-    const tagIds = dto.tags.map((obj) => obj.id);
-    const tags = await this.tagsRepository.findByIds(tagIds);
-    question.tags = tags;
-    delete dto.tags;
-
+    if (dto.tags) {
+      const tagIds = dto.tags.map((obj) => obj.id);
+      const tags = await this.tagsRepository.findByIds(tagIds);
+      question.tags = tags;
+      delete dto.tags;
+    }
+    question.updated = new Date();
     await this.questionsRepository.save(question);
     await this.questionsRepository.update(id, dto);
     return question;

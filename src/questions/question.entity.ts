@@ -4,6 +4,7 @@ import { AnswerEntity } from 'src/answers/answer.entity';
 import { Base } from 'src/utils/base';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -16,6 +17,9 @@ import { OutputBlockData } from './dto/question.dto';
 
 @Entity('questions')
 export class QuestionEntity extends Base {
+  @CreateDateColumn()
+  updated: Date;
+
   @Column()
   title: string;
 

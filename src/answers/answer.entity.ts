@@ -2,10 +2,13 @@ import { OutputBlockData } from 'src/questions/dto/question.dto';
 import { QuestionEntity } from 'src/questions/question.entity';
 import { UserEntity } from 'src/users/user.entity';
 import { Base } from 'src/utils/base';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('answers')
 export class AnswerEntity extends Base {
+  @CreateDateColumn()
+  updated: Date;
+
   @Column({ type: 'jsonb' })
   body: OutputBlockData[];
 

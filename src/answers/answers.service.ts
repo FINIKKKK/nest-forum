@@ -91,7 +91,10 @@ export class AnswersService {
   }
 
   async updateAnswer(id: number, dto: AnswerDto) {
-    const answer = await this.answersRepository.update(id, dto);
+    const answer = await this.answersRepository.findOne({ where: { id } });
+    answer.updated = new Date();
+    await this.answersRepository.save(answer);
+    await this.answersRepository.update(id, dto);
     return answer;
   }
 
