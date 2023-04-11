@@ -13,6 +13,9 @@ export class TagEntity extends Base {
   @ManyToMany(() => QuestionEntity, (question) => question.tags)
   questions: QuestionEntity[];
 
-  @RelationCount((tag: TagEntity) => tag.questions)
+  @Column({ default: 0 })
   questionCount: number;
+
+  @Column({ default: 0 })
+  postsCount: number;
 }

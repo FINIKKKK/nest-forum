@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { QuestionDto } from './dto/question.dto';
 import { ParamsQuestionDto } from './dto/params-question.dto';
 import { QuestionEntity } from './question.entity';
@@ -25,6 +25,12 @@ export class QuestionsService {
   ) {}
 
   async createQuestion(dto: QuestionDto, userId: number) {
+    const tags = dto.tags.map((tag) => {
+      tag.questionCount++;
+      return tag;
+    });
+    await this.tagsRepository.save(tags);
+
     const question = await this.questionsRepository.save({
       ...dto,
       user: { id: userId },
@@ -132,22 +138,46 @@ export class QuestionsService {
         name: question.user.name,
         avatar: question.user.avatar,
       },
-      tags: question.tags.map((obj) => ({
-        id: obj.id,
-        name: obj.name,
-      })),
     };
   }
 
   async updateQuestion(id: number, dto: QuestionDto) {
-    const question = await this.questionsRepository.findOne({ where: { id } });
+    const question = await this.questionsRepository
+      .createQueryBuilder('q')
+      .whereInIds(id)
+      .leftJoinAndSelect('q.tags', 'tags')
+      .getOne();
 
     if (dto.tags) {
-      const tagIds = dto.tags.map((obj) => obj.id);
-      const tags = await this.tagsRepository.findByIds(tagIds);
-      question.tags = tags;
+      const newTags = dto.tags.filter(
+        (tag) => !question.tags.find((t) => t.id === tag.id),
+      );
+      const oldTags = question.tags.filter(
+        (tag) => !dto.tags.find((t) => t.id === tag.id),
+      );
+
+      if (newTags.length > 0) {
+        newTags.forEach((tag) => {
+          tag.questionCount++;
+        });
+      }
+      if (oldTags.length > 0) {
+        oldTags.forEach((tag) => {
+          tag.questionCount--;
+        });
+      }
+
+      question.tags = dto.tags;
       delete dto.tags;
+
+      if (oldTags.length > 0) {
+        await this.tagsRepository.save(oldTags);
+      }
+      if (newTags.length > 0) {
+        await this.tagsRepository.save(newTags);
+      }
     }
+
     question.updated = new Date();
     await this.questionsRepository.save(question);
     await this.questionsRepository.update(id, dto);
@@ -158,13 +188,22 @@ export class QuestionsService {
     const answers = await this.answersRepository.find({
       where: { question: { id } },
     });
+    const question = await this.questionsRepository
+      .createQueryBuilder('q')
+      .whereInIds(id)
+      .leftJoinAndSelect('q.tags', 'tags')
+      .getOne();
+
+    const tags = question.tags.map((tag) => {
+      tag.questionCount--;
+      return tag;
+    });
+    await this.tagsRepository.save(tags);
 
     for (const answer of answers) {
       await this.commentsRepository.delete({ answer: { id: answer.id } });
     }
-
     await this.answersRepository.delete({ question: { id } });
-
     await this.questionsRepository.delete(id);
   }
 }
