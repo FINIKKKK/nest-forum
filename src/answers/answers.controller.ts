@@ -21,7 +21,6 @@ export class AnswersController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: AnswerDto, @User() userId: number) {
-    console.log(userId);
     return this.answersService.createAnswer(dto, userId);
   }
 

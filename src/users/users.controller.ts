@@ -18,7 +18,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { ParamsUserDto } from './dto/params-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -47,17 +46,29 @@ export class UsersController {
     return this.usersService.getUserByLogin(`${login}`);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('/avatar/:id')
   @UseInterceptors(FileInterceptor('avatar'))
   updateAvatar(@Param('id') id: number, @UploadedFile() avatar) {
     return this.usersService.updateUserAvatar(id, avatar);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch('/password/:id')
+  updatePassword(
+    @Param('id') id: number,
+    @Body() dto: { oldPassword: string; newPassword: string },
+  ) {
+    return this.usersService.updateUserPassword(id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.updateUser(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.usersService.removeUser(id);

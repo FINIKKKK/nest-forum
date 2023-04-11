@@ -10,7 +10,7 @@ export class UserDto {
   @IsString({ message: 'Поле должно быть строкой' })
   @IsEmail({}, { message: 'Некорректный email' })
   readonly email: string;
-
+  
   @IsOptional()
   @IsString({ message: 'Поле должно быть строкой' })
   @Length(9, Number.MAX_SAFE_INTEGER, {

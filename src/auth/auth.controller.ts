@@ -33,7 +33,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req) {
-    console.log(req.user);
+    this.authService.authSocial(req.user)
   }
 
   @Get('github')
@@ -44,5 +44,6 @@ export class AuthController {
   @UseGuards(AuthGuard('github'))
   async githubAuthCallback(@Req() req) {
     console.log(req.user);
+    this.authService.authSocial(req.user)
   }
 }

@@ -1,8 +1,6 @@
 import {
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   RelationCount,
 } from 'typeorm';
@@ -54,4 +52,7 @@ export class UserEntity extends Base {
 
   @Column({ default: true })
   showEmail: boolean;
+
+  @Column({ default: false })
+  isAdmin: boolean;
 }

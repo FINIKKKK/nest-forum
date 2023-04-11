@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilesService } from 'src/files/files.service';
 import { Repository } from 'typeorm';
@@ -49,12 +54,15 @@ export class UsersService {
 
     const [items, total] = await qb.getManyAndCount();
 
-    return { total, items };
+    const users = items.map(({ password, ...obj }) => obj);
+
+    return { total, users };
   }
 
   async getUserByLogin(login: string) {
     const user = await this.usersRepository.findOne({ where: { login } });
-    return user;
+    const { password, ...userData } = user;
+    return userData;
   }
 
   async getUserByEmail(email: string) {
@@ -64,7 +72,8 @@ export class UsersService {
 
   async getUserById(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
-    return user;
+    const { password, ...userData } = user;
+    return userData;
   }
 
   async addQuestionToFavorite(userId: number, questionId: number) {
@@ -87,7 +96,25 @@ export class UsersService {
     }
     await this.usersRepository.save(user);
 
-    return { user };
+    const { password, ...userData } = user;
+    return userData;
+  }
+
+  async updateUser(id: number, dto: UpdateUserDto) {
+    const hashPassword = dto.password
+      ? await bcrypt.hash(dto.password, 5)
+      : undefined;
+
+    const userName = dto.login
+      ? dto.login.replace(/ /g, '_').toLocaleLowerCase()
+      : undefined;
+
+    const user = await this.usersRepository.update(id, {
+      ...dto,
+      ...(userName && { login: userName }),
+      ...(hashPassword && { password: hashPassword }),
+    });
+    return user;
   }
 
   async updateUserAvatar(id: number, avatar: any) {
@@ -101,20 +128,31 @@ export class UsersService {
     return fileName;
   }
 
-  async updateUser(id: number, dto: UpdateUserDto) {
-    dto.password;
-    const hashPassword = dto.password
-      ? await bcrypt.hash(dto.password, 5)
+  async updateUserPassword(
+    id: number,
+    dto: { oldPassword: string; newPassword: string },
+  ) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    const isTruePassword = await bcrypt.compare(dto.oldPassword, user.password);
+
+    if (!isTruePassword) {
+      throw new UnauthorizedException({
+        message: 'Неверный пароль',
+      });
+    }
+
+    const hashPassword = dto.newPassword
+      ? await bcrypt.hash(dto.newPassword, 5)
       : undefined;
-    const user = await this.usersRepository.update(id, {
-      ...dto,
-      ...(hashPassword && { password: hashPassword }),
+
+    await this.usersRepository.update(id, {
+      password: hashPassword,
     });
-    return user;
+    return 'Пароль обновлен';
   }
 
   async removeUser(id: number) {
-    const user = await this.usersRepository.delete(id);
-    return user;
+    await this.usersRepository.delete(id);
+    return 'Пользователь удален';
   }
 }

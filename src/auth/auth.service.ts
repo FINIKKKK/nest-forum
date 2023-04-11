@@ -70,6 +70,21 @@ export class AuthService {
     };
   }
 
+  async authSocial(dto: UserDto) {
+    const user = await this.usersService.getUserByEmail(dto.email);
+
+    if (user) {
+      const { password, ...userData } = user;
+      const token = await this.generateToken(user);
+      return {
+        ...userData,
+        token,
+      };
+    } else {
+      return dto;
+    }
+  }
+
   private async generateToken(user: UserEntity) {
     const payload = { id: user.id, name: user.login, email: user.email };
     return this.jwtService.sign(payload);
