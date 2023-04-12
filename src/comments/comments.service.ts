@@ -34,7 +34,8 @@ export class CommentsService {
       .orderBy('c.createdAt', 'DESC')
       .leftJoinAndSelect('c.user', 'user')
       .leftJoinAndSelect('c.question', 'question')
-      .leftJoinAndSelect('c.answer', 'answer');
+      .leftJoinAndSelect('c.answer', 'answer')
+      .leftJoinAndSelect('c.post', 'post');
 
     if (dto.questionId) {
       qb.where('question.id = :questionId', { questionId: dto.questionId });
@@ -43,6 +44,12 @@ export class CommentsService {
     if (dto.answerId) {
       qb.where('answer.id = :answerId', {
         answerId: dto.answerId,
+      });
+    }
+
+    if (dto.answerId) {
+      qb.where('post.id = :postId', {
+        postId: dto.postId,
       });
     }
 

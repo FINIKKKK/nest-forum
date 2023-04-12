@@ -7,6 +7,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { CategoryEntity } from 'src/categories/category.entity';
 import { TagEntity } from 'src/tags/tag.entity';
 import { CommentEntity } from 'src/comments/comment.entity';
+import { UserEntity } from 'src/users/user.entity';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CommentEntity } from 'src/comments/comment.entity';
       CategoryEntity,
       TagEntity,
       CommentEntity,
+      UserEntity,
     ]),
     AuthModule,
   ],

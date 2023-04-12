@@ -7,9 +7,11 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { User } from 'src/users/user.decorator';
+import { ParamsPostDto } from './dto/params-post.dto';
 import { PostDto } from './dto/post.dto';
 import { PostsService } from './posts.service';
 
@@ -24,8 +26,8 @@ export class PostsController {
   }
 
   @Get()
-  findAll() {
-    return this.postsService.getAllPosts();
+  findAll(@Query() dto: ParamsPostDto) {
+    return this.postsService.getAllPosts(dto);
   }
 
   @Get(':id')

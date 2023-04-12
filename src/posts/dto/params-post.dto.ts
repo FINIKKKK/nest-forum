@@ -3,6 +3,8 @@ export class ParamsPostDto {
   readonly page?: number;
   readonly orderBy?: string;
   readonly searchBy?: string;
-  readonly categoryBy?: string;
-  readonly tagBy?: string;
+  readonly categoryId?: number;
+  readonly tagBy?: number;
+  readonly userId?: number;
+  readonly favorites?: boolean;
 }

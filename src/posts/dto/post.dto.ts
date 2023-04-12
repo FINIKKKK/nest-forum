@@ -5,5 +5,5 @@ export class PostDto {
   readonly title: string;
   readonly body: OutputBlockData[];
   readonly categoryId: number;
-  readonly tags: TagEntity[];
+  tags: TagEntity[];
 }
