@@ -4,7 +4,10 @@ import { Column, Entity } from 'typeorm';
 @Entity('categories')
 export class CategoryEntity extends Base {
   @Column({ unique: true })
-  name: string;
+  value: string;
+
+  @Column({ unique: true })
+  label: string;
 
   @Column()
   description: string;

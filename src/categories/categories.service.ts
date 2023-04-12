@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CategoryEntity } from './category.entity';
 import { CategoryDto } from './dto/category.dto';
+import * as translit from 'transliteration';
 
 @Injectable()
 export class CategoriesService {
@@ -13,7 +14,14 @@ export class CategoriesService {
 
   // createCategory ----------------------------------------------
   async createCategory(dto: CategoryDto) {
-    const categories = await this.categoriesRepository.save(dto);
+    const slug = translit.slugify(dto.label);
+    const categories = await this.categoriesRepository.save({
+      ...dto,
+      value: slug,
+      ...(dto.description
+        ? { description: dto.description }
+        : { description: dto.label }),
+    });
     return categories;
   }
 

@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from 'src/categories/category.entity';
 import { CommentEntity } from 'src/comments/comment.entity';
+import { FilesService } from 'src/files/files.service';
 import { TagEntity } from 'src/tags/tag.entity';
 import { UserEntity } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { ParamsPostDto } from './dto/params-post.dto';
 import { PostDto } from './dto/post.dto';
 import { PostEntity } from './post.entity';
+import * as translit from 'transliteration';
 
 @Injectable()
 export class PostsService {
@@ -26,6 +28,10 @@ export class PostsService {
 
   // createPost ----------------------------------------------
   async createPost(dto: PostDto, userId: number) {
+    const slug = translit.slugify(dto.title);
+    const description = dto.body.find((obj) => obj.type === 'paragraph')?.data
+      ?.text;
+
     const category = await this.categoriesRepository.findOne({
       where: { id: dto.categoryId },
     });
@@ -33,15 +39,20 @@ export class PostsService {
     await this.categoriesRepository.save(category);
 
     const tags = dto.tags.map((tag) => {
-      tag.questionCount++;
+      tag.postsCount++;
       return tag;
     });
     await this.tagsRepository.save(tags);
 
     const post = await this.postsRepository.save({
       ...dto,
+      slug,
+      description: description || '',
       user: {
         id: userId,
+      },
+      category: {
+        id: dto.categoryId,
       },
     });
     return post;
@@ -100,6 +111,27 @@ export class PostsService {
     }
 
     const [posts, total] = await qb.getManyAndCount();
+
+    if (dto.isShort) {
+      const items = posts.map((obj) => {
+        delete obj.body;
+        delete obj.image;
+        delete obj.views;
+        delete obj.updated;
+        delete obj.tags;
+        delete obj.user;
+        delete obj.commentsCount;
+        return {
+          ...obj,
+          category: {
+            id: obj.category.id,
+            label: obj.category.label,
+            value: obj.category.value,
+          },
+        };
+      });
+      return { total, items };
+    }
 
     const items = posts.map((obj) => {
       delete obj.body;
@@ -166,12 +198,12 @@ export class PostsService {
 
       if (newTags.length > 0) {
         newTags.forEach((tag) => {
-          tag.questionCount++;
+          tag.postsCount++;
         });
       }
       if (oldTags.length > 0) {
         oldTags.forEach((tag) => {
-          tag.questionCount--;
+          tag.postsCount--;
         });
       }
 

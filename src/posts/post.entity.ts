@@ -24,6 +24,15 @@ export class PostEntity extends Base {
   @Column({ type: 'jsonb' })
   body: OutputBlockData[];
 
+  @Column()
+  image: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  slug: string;
+
   @Column({ default: 0 })
   views: number;
 

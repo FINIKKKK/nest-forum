@@ -7,4 +7,5 @@ export class ParamsPostDto {
   readonly tagBy?: number;
   readonly userId?: number;
   readonly favorites?: boolean;
+  readonly isShort?: boolean;
 }
