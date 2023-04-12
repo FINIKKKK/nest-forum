@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToMany, RelationCount } from 'typeorm';
+import { Column, Entity, ManyToMany } from 'typeorm';
 import { Base } from 'src/utils/base';
 import { QuestionEntity } from 'src/questions/question.entity';
+import { PostEntity } from 'src/posts/post.entity';
 
 @Entity('tags')
 export class TagEntity extends Base {
@@ -15,6 +16,9 @@ export class TagEntity extends Base {
 
   @Column({ default: 0 })
   questionCount: number;
+
+  @ManyToMany(() => PostEntity, (post) => post.tags)
+  posts: PostEntity[];
 
   @Column({ default: 0 })
   postsCount: number;
