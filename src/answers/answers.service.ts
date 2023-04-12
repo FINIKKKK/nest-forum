@@ -32,9 +32,12 @@ export class AnswersService {
       qb.where('a.question = :questionId', { questionId });
     }
 
-    if (dto.orderBy === 'date') {
-      qb.orderBy('a.isAnswer', 'DESC');
+    if (dto.orderBy === 'date1') {
+      qb.orderBy('a.isAnswer', 'ASC');
       qb.addOrderBy('a.createdAt', 'DESC');
+    } else if (dto.orderBy === 'date2') {
+      qb.orderBy('a.isAnswer', 'ASC');
+      qb.addOrderBy('a.rating', 'ASC');
     } else {
       qb.orderBy('a.isAnswer', 'DESC');
       qb.addOrderBy('a.rating', 'DESC');
@@ -45,7 +48,7 @@ export class AnswersService {
       .leftJoinAndSelect('a.question', 'question')
       .getManyAndCount();
 
-    const questions = items.map((obj) => {
+    const answers = items.map((obj) => {
       return {
         ...obj,
         user: {
@@ -60,7 +63,7 @@ export class AnswersService {
       };
     });
 
-    return questions;
+    return answers;
   }
 
   async getAnswerById(id: number) {

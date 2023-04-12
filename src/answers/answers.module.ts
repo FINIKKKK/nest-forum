@@ -4,7 +4,6 @@ import { AnswersController } from './answers.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnswerEntity } from './answer.entity';
 import { AuthModule } from 'src/auth/auth.module';
-import { CommentsModule } from 'src/comments/comments.module';
 import { CommentEntity } from 'src/comments/comment.entity';
 
 @Module({

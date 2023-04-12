@@ -35,11 +35,13 @@ export class QuestionsController {
     return this.questionsService.getQuestionById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: number, @Body() dto: QuestionDto) {
     return this.questionsService.updateQuestion(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.questionsService.removeQuestion(id);

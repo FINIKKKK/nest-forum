@@ -52,17 +52,18 @@ export class UsersService {
       });
     }
 
-    const [items, total] = await qb.getManyAndCount();
+    const [users, total] = await qb.getManyAndCount();
 
-    const users = items.map(({ password, ...obj }) => obj);
+    const items = users
+      .filter((obj) => !obj.isAdmin)
+      .map(({ password, ...obj }) => obj);
 
-    return { total, users };
+    return { total, items };
   }
 
   async getUserByLogin(login: string) {
     const user = await this.usersRepository.findOne({ where: { login } });
-    const { password, ...userData } = user;
-    return userData;
+    return user;
   }
 
   async getUserByEmail(email: string) {

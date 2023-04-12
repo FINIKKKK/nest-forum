@@ -35,11 +35,13 @@ export class CommentsController {
     return this.commentsService.getCommentById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: number, @Body() dto: CommentDto) {
     return this.commentsService.updateComment(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.commentsService.removeComment(id);
