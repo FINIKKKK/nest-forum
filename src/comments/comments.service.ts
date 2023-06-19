@@ -47,12 +47,6 @@ export class CommentsService {
       });
     }
 
-    if (dto.answerId) {
-      qb.where('post.id = :postId', {
-        postId: dto.postId,
-      });
-    }
-
     const [comments, total] = await qb.getManyAndCount();
 
     const items = comments.map((obj) => {
