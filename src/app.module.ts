@@ -10,7 +10,6 @@ import { TagsModule } from './tags/tags.module';
 import * as path from 'path';
 import { AnswersModule } from './answers/answers.module';
 import { CommentsModule } from './comments/comments.module';
-import { GoogleStrategy } from './auth/strategies/google.strategy';
 import { CategoriesModule } from './categories/categories.module';
 import { PostsModule } from './posts/posts.module';
 

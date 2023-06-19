@@ -27,7 +27,7 @@ export class FilesService {
           fs.mkdirSync(filePath, { recursive: true });
         }
         fs.writeFileSync(path.join(filePath, fileName), image.buffer);
-        const fullFileName = `${process.env.SITE_PATH}/img${
+        const fullFileName = `http://localhost:7777/img${
           '/' + dto.imagePath
         }/${fileName}`;
         return fullFileName;

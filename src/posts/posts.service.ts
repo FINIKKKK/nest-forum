@@ -141,9 +141,6 @@ export class PostsService {
           id: item.id,
           name: item.name,
         })),
-        user: {
-          id: obj.user.id,
-        },
       };
     });
     return { total, items };
